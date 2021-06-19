@@ -43,8 +43,41 @@ const Auth: React.FC = () => {
   }
 
   return (
-    <div>
-      
+    <div className={Styles.auth__root}>
+      <h1> { isLoginView ? "Login" : "Register" } </h1>
+      <br />
+      <TextField
+        InputLabelProps={{
+          shrink: true,
+        }}
+        label="Username"
+        type="text"
+        name="username"
+        value={credential.username}
+        onChange={handleInputChange}
+      />
+      <TextField
+        InputLabelProps={{
+          shrink: true,
+        }}
+        label="Password"
+        type="Password"
+        name="Password"
+        value={credential.password}
+        onChange={handleInputChange}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        size="small"
+        className={classes.button}
+        onClick={login}
+      >
+        { isLoginView ? "Login" : "Register" }
+      </Button>
+      <span onClick={() => dispatch(toggleMode())}>
+        { isLoginView ? "Create new account" : "Back to Login" }
+      </span>
     </div>
   )
 };
