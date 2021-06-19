@@ -15,6 +15,11 @@ export interface PROFILE {
   img: string | null;
 }
 
+export interface POST_PROFILE {
+  id: number;
+  img: File | null;
+}
+
 export interface CRED {
   username: string;
   password: string;
