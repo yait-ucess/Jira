@@ -12,7 +12,6 @@ import {
   JWT,
   USER,
 } from '../types';
-import { stat } from 'fs';
 
 export const fetchAsyncLogin = createAsyncThunk(
   "auth/login",
