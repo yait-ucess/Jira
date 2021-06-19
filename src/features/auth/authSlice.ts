@@ -12,6 +12,7 @@ import {
   JWT,
   USER,
 } from '../types';
+import { stat } from 'fs';
 
 export const fetchAsyncLogin = createAsyncThunk(
   "auth/login",
@@ -131,11 +132,55 @@ export const incrementAsync = createAsyncThunk(
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    toggleMode(state) {
+      state.isLoginView = !state.isLoginView;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(
+      fetchAsyncLogin.fulfilled,
+      (state, action: PayloadAction<JWT>) => {
+        localStorage.setItem("localJWT", action.payload.access);
+        action.payload.access && (window.location.href = "/tasks");
+      }
+    );
+    builder.addCase(
+      fetchAsyncGetMyProf.fulfilled,
+      (state, action: PayloadAction<LOGIN_USER>) => {
+        return {
+          ...state,
+          loginUser: action.payload,
+        };
+      }
+    );
+    builder.addCase(
+      fetchAsyncGetProfs.fulfilled,
+      (state, action: PayloadAction<PROFILE[]>) => {
+        return {
+          ...state,
+          profiles: action.payload,
+        };
+      }
+    );
+    builder.addCase(
+      fetchAsyncUpdateProf.fulfilled,
+      (state, action: PayloadAction<PROFILE>) => {
+        return {
+          ...state,
+          profiles: state.profiles.map((prof) => 
+            prof.id === action.payload.id ? action.payload : prof
+          ),
+        };
+      }
+    );
+  },
 });
 
-export const {} = authSlice.actions;
+export const { toggleMode } = authSlice.actions;
 
-export const selectCount = (state: RootState) => state.counter.value;
+export const selectIsLoginView = (state: RootState) => state.auth.isLoginView;
+export const selectLoginUser = (state: RootState) => state.auth.loginUser;
+export const selectProfiles = (state: RootState) => state.auth.profiles;
 
 export default authSlice.reducer;
