@@ -20,6 +20,28 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Auth: React.FC = () => {
   const classes = useStyles();
+  const dispatch: AppDispatch = useDispatch();
+  const isLoginView = useSelector(selectIsLoginView);
+  const [credential, setCredential] = useState({ username: "", password: "" });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    setCredential({ ...credential, [name]: value });
+  };
+
+  const login = async () => {
+    if (isLoginView) {
+      await dispatch(fetchAsyncLogin(credential));
+    } else {
+      const result = await dispatch(fetchAsyncRegister(credential));
+      if (fetchAsyncRegister.fulfilled.match(result)) {
+        await dispatch(fetchAsyncLogin(credential));
+        await dispatch(fetchAsyncCreateProf());
+      }
+    }
+  }
+
   return (
     <div>
       
