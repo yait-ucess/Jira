@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { fetchCount } from '../counter/counterAPI';
 import axios from 'axios';
 import {
   AUTH_STATE,
@@ -119,14 +118,6 @@ const initialState: AUTH_STATE = {
   },
   profiles: [{id: 0, user_profile: 0, img: null}],
 };
-
-export const incrementAsync = createAsyncThunk(
-  'counter/fetchCount',
-  async (amount: number) => {
-    const response = await fetchCount(amount);
-    return response.data;
-  }
-);
 
 export const authSlice = createSlice({
   name: 'auth',
