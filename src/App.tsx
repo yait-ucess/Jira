@@ -1,35 +1,37 @@
-import React, { useEffect } from "react";
-import styles from "./App.module.css";
-import { Grid, Avatar } from "@material-ui/core";
+import React, { useEffect } from 'react';
+import Styles from './App.module.css';
+import { Grid, Avatar } from '@material-ui/core';
 import {
   makeStyles,
   createMuiTheme,
   MuiThemeProvider,
   Theme,
-} from "@material-ui/core/styles";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import PolymerIcon from "@material-ui/icons/Polymer";
+} from '@material-ui/core/styles';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import PolymerIcon from '@material-ui/icons/Polymer';
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from 'react-redux';
 import {
   selectLoginUser,
   selectProfiles,
   fetchAsyncGetMyProf,
   fetchAsyncGetProfs,
   fetchAsyncUpdateProf,
-} from "./features/auth/authSlice";
+} from './features/auth/authSlice';
+
 import {
   fetchAsyncGetTasks,
   fetchAsyncGetUsers,
   fetchAsyncGetCategory,
   selectEditedTask,
-} from "./features/task/taskSlice";
+  selectTasks,
+} from './features/task/taskSlice';
 
-import TaskList from "./features/task/TaskList";
-import TaskForm from "./features/task/TaskForm";
-import TaskDisplay from "./features/task/TaskDisplay";
+import TaskList from './features/task/TaskList';
+import TaskForm from './features/task/TaskForm';
+import TaskDisplay from './features/task/TaskDisplay';
 
-import { AppDispatch } from "./app/store";
+import { AppDispatch } from './app/store';
 
 const theme = createMuiTheme({
   palette: {
@@ -38,6 +40,7 @@ const theme = createMuiTheme({
     },
   },
 });
+
 const useStyles = makeStyles((theme: Theme) => ({
   icon: {
     marginTop: theme.spacing(3),
@@ -47,11 +50,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(1),
   },
 }));
+
 const App: React.FC = () => {
   const classes = useStyles();
   const dispatch: AppDispatch = useDispatch();
   const editedTask = useSelector(selectEditedTask);
-
+  const tasks = useSelector(selectTasks);
   const loginUser = useSelector(selectLoginUser);
   const profiles = useSelector(selectProfiles);
 
@@ -62,12 +66,12 @@ const App: React.FC = () => {
   const Logout = () => {
     localStorage.removeItem("localJWT");
     window.location.href = "/";
-  };
+  }
 
   const handlerEditPicture = () => {
     const fileInput = document.getElementById("imageInput");
     fileInput?.click();
-  };
+  }
 
   useEffect(() => {
     const fetchBootLoader = async () => {
@@ -82,45 +86,43 @@ const App: React.FC = () => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <div className={styles.app__root}>
+      <div className={Styles.app__root}>
         <Grid container>
           <Grid item xs={4}>
             <PolymerIcon className={classes.icon} />
           </Grid>
           <Grid item xs={4}>
-            <h1>Scrum Task Board</h1>
+            <h1>JIRA Project Board</h1>
           </Grid>
           <Grid item xs={4}>
-            <div className={styles.app__logout}>
-              <button className={styles.app__iconLogout} onClick={Logout}>
-                <ExitToAppIcon fontSize="large" />
-              </button>
-              <input
-                type="file"
-                id="imageInput"
-                hidden={true}
-                onChange={(e) => {
-                  dispatch(
-                    fetchAsyncUpdateProf({
-                      id: loginProfile.id,
-                      img: e.target.files !== null ? e.target.files[0] : null,
-                    })
-                  );
-                }}
+            <button className={Styles.app__iconLogout} onClick={Logout} >
+              <ExitToAppIcon fontSize="large" />
+            </button>
+            <input
+              type="file"
+              id="imageInput"
+              hidden={true}
+              onChange={(e) => {
+                dispatch(
+                  fetchAsyncUpdateProf({
+                    id: loginProfile.id,
+                    img: e.target.files !== null ? e.target.files[0] : null,
+                  })
+                );
+              }}
+            />
+            <button className={Styles.app__btn} onClick={handlerEditPicture} >
+              <Avatar
+                className={classes.avatar}
+                alt="avatar"
+                src={
+                  loginProfile?.img !== null ? loginProfile?.img : undefined
+                }
               />
-              <button className={styles.app__btn} onClick={handlerEditPicture}>
-                <Avatar
-                  className={classes.avatar}
-                  alt="avatar"
-                  src={
-                    loginProfile?.img !== null ? loginProfile?.img : undefined
-                  }
-                />
-              </button>
-            </div>
+            </button>
           </Grid>
           <Grid item xs={6}>
-            <TaskList />
+            {tasks[0]?.task && <TaskList/>}
           </Grid>
           <Grid item xs={6}>
             <Grid
