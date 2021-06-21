@@ -5,7 +5,6 @@ import {
   AUTH_STATE,
   CRED,
   LOGIN_USER,
-  FILE,
   POST_PROFILE,
   PROFILE,
   JWT,
@@ -45,10 +44,10 @@ export const fetchAsyncRegister = createAsyncThunk(
 );
 
 export const fetchAsyncGetMyProf = createAsyncThunk(
-  "auth/loginUser",
+  "auth/loginuser",
   async () => {
     const res = await axios.get<LOGIN_USER>(
-      `${process.env.REACT_APP_API_URL}/api/loginUser/`,
+      `${process.env.REACT_APP_API_URL}/api/loginuser/`,
       {
         headers: {
           Authorization: `JWT ${localStorage.localJWT}`,
@@ -97,7 +96,7 @@ export const fetchAsyncUpdateProf = createAsyncThunk(
     const uploadData = new FormData();
     profile.img && uploadData.append("img", profile.img, profile.img.name);
     const res = await axios.put<PROFILE>(
-      `${process.env.REACT_APP_API_URL}/api/profile/${profile.id}`,
+      `${process.env.REACT_APP_API_URL}/api/profile/${profile.id}/`,
       uploadData,
       {
         headers: {
