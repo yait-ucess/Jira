@@ -116,11 +116,33 @@ const TaskList: React.FC = () => {
     return loginProfile?.img !== null ? loginProfile?.img : undefined;
   };
 
-  return (
-    <div>
-      
-    </div>
-  )
+  return 
+    <>
+      <Button
+        className={classes.button}
+        variant="contained"
+        color="primary"
+        size="small"
+        startIcon={<AddCircleOutlineIcon />}
+        onClick={() => {
+          dispatch(
+            editTask({
+              id: 0,
+              task: "",
+              description: "",
+              criteria: "",
+              responsible: loginUser.id,
+              status: "1",
+              category: 1,
+              estimate: 0,
+            })
+          );
+          dispatch(selectTask(initialState.selectedTask));
+        }}
+      >
+        Add project
+      </Button>
+    </>
 };
 
 export default TaskList
