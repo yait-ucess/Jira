@@ -116,7 +116,7 @@ const TaskList: React.FC = () => {
     return loginProfile?.img !== null ? loginProfile?.img : undefined;
   };
 
-  return 
+  return (
     <>
       <Button
         className={classes.button}
@@ -142,7 +142,99 @@ const TaskList: React.FC = () => {
       >
         Add project
       </Button>
+      {tasks[0]?.task && <Table size="small" className={classes.table}>
+        <TableHead>
+          <TableRow>
+            {columns.map(
+              (column, colIndex) =>
+                (
+                  column === "task" ||
+                  column === "status" ||
+                  column === "category" ||
+                  column === "estimate" ||
+                  column === "responsible" ||
+                  column === "owner"
+                ) && (
+                  <TableCell align="center" key={colIndex}>
+                    <TableSortLabel
+                      active={state.activeKey === column}
+                      direction={state.order}
+                      onClick={() => handleClickSortColumn(column)}
+                    >
+                      <strong>{column}</strong>
+                    </TableSortLabel>
+                  </TableCell>
+                )
+            )}
+            <TableCell></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {state.rows.map((row, rowIndex) => (
+            <TableRow hover key={rowIndex}>
+              {Object.keys(row).map(
+                (key, colIndex) =>
+                  (
+                    key === "task" ||
+                    key === "status_name" ||
+                    key === "category_item" ||
+                    key === "estimate"
+                  ) && (
+                    <TableCell
+                      align="center"
+                      className={Styles.tasklist__hover}
+                      key={`${rowIndex} + ${colIndex}`}
+                      onClick={() => {
+                        dispatch(selectTask(row));
+                        dispatch(editTask(initialState.editedTask));
+                      }}
+                    >
+                      {key === "status_name" ? (
+                        renderSwitch(row[key])
+                      ) : (
+                        <span>{row[key]}</span>
+                      )}
+                    </TableCell>
+                  )
+              )}
+              <TableCell>
+                <Avatar
+                  className={classes.small}
+                  alt="resp"
+                  src={conditionalSrc(row["responsible"])}
+                />
+              </TableCell>
+              <TableCell>
+                <Avatar
+                  className={classes.small}
+                  alt="owner"
+                  src={conditionalSrc(row["owner"])}
+                />
+              </TableCell>
+              <TableCell  align="center">
+                <button
+                  className={Styles.tasklist__icon}
+                  onClick={() => {
+                    dispatch(fetchAsyncDeleteTask(row.id));
+                  }}
+                  disabled={row["owner"] !== loginUser.id}
+                >
+                  <DeleteOutlineOutlinedIcon />
+                </button>
+                <button
+                  className={Styles.tasklist__icon}
+                  onClick={() => dispatch(editTask(row))}
+                  disabled={row["owner"] !== loginUser.id}
+                >
+                  <EditOutlinedIcon />
+                </button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>}
     </>
+  );
 };
 
 export default TaskList
