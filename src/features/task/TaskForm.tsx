@@ -30,7 +30,7 @@ import { initialState } from './taskSlice';
 const useStyles = makeStyles((theme: Theme) => ({
   field: {
     margin: theme.spacing(2),
-    minHeight: 240,
+    minWidth: 240,
   },
   button: {
     margin: theme.spacing(3),
@@ -90,7 +90,7 @@ const TaskForm: React.FC = () => {
 
   const isCatDisabled = inputText.length === 0;
 
-  const hendleInputTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
   };
 
@@ -132,7 +132,154 @@ const TaskForm: React.FC = () => {
 
   return (
     <div>
-      
+      <h2>{editedTask.id ? "Update Project" : "New Project"}</h2>
+      <form>
+        <TextField
+          className={classes.field}
+          label="Estimate [days]"
+          type="number"
+          name="estimate"
+          InputProps={{ inputProps: { min: 0, max: 1000 } }}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          value={editedTask.estimate}
+          onChange={handleInputChange}
+        />
+        <TextField
+          className={classes.field}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          label="Task"
+          type="text"
+          name="task"
+          value={editedTask.task}
+          onChange={handleInputChange}
+        />
+        <br />
+        <TextField
+          className={classes.field}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          label="Description"
+          type="text"
+          name="description"
+          value={editedTask.description}
+          onChange={handleInputChange}
+        />
+        <TextField
+          className={classes.field}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          label="Criteria"
+          type="text"
+          name="criteria"
+          value={editedTask.criteria}
+          onChange={handleInputChange}
+        />
+        <br />
+        <FormControl className={classes.field}>
+          <InputLabel>Responsible</InputLabel>
+          <Select
+            name="responsible"
+            onChange={handleSelectRespChange}
+            value={editedTask.responsible}
+          >
+            {userOptions}
+          </Select>
+        </FormControl>
+        <FormControl className={classes.field}>
+          <InputLabel>Status</InputLabel>
+          <Select
+            name="responsible"
+            value={editedTask.status}
+            onChange={handleSelectStatusChange}
+          >
+            <MenuItem value={1}>Not started</MenuItem>
+            <MenuItem value={2}>Doing</MenuItem>
+            <MenuItem value={3}>Done</MenuItem>
+          </Select>
+        </FormControl>
+        <br />
+        <FormControl className={classes.field}>
+          <InputLabel>Category</InputLabel>
+          <Select
+            name="category"
+            value={editedTask.category}
+            onChange={handleSelectCatChange}
+          >
+            {catOptions}
+          </Select>
+        </FormControl>
+        <Fab
+          size="small"
+          color="primary"
+          onClick={handleOpen}
+          className={classes.addIcon}
+        >
+          <AddIcon />
+        </Fab>
+        
+        <Modal open={open} onClose={handleClose}>
+          <div style={modalStyle} className={classes.paper}>
+            <TextField
+              className={classes.field}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              label="New Category"
+              type="text"
+              value={inputText}
+              onChange={handleInputTextChange}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              className={classes.saveModal}
+              startIcon={<SaveIcon />}
+              disabled={isCatDisabled}
+              onClick={() => {
+                dispatch(fetchAsyncCreateCategory(inputText));
+                handleClose();
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        </Modal>
+        <br />
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          className={classes.button}
+          startIcon={<SaveIcon />}
+          disabled={isDisabled}
+          onClick={
+            editedTask.id !== 0
+              ? () => dispatch(fetchAsyncUpdateTask(editedTask))
+              : () => dispatch(fetchAsyncCreateTask(editedTask))
+          }
+        >
+          {editedTask.id !== 0 ? "Update" : "Save"}
+        </Button>
+
+        <Button
+          variant="contained"
+          color="default"
+          size="small"
+          onClick={() => {
+            dispatch(editTask(initialState.editedTask));
+            dispatch(selectTask(initialState.selectedTask));
+          }}
+        >
+          Cancel
+        </Button>
+      </form>
     </div>
   )
 }
